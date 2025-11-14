@@ -1,0 +1,733 @@
+{
+  "info": {
+    "name": "DocDex API Collection",
+    "description": "Complete API collection for testing DocDex Catalyst functions",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "CATALYST_BASE_URL",
+      "value": "https://your-catalyst-app.catalyst.zoho.com",
+      "description": "Your Catalyst application base URL"
+    },
+    {
+      "key": "CLIQ_USER_ID",
+      "value": "test_user_123",
+      "description": "Test Cliq user ID"
+    },
+    {
+      "key": "CLIQ_ORG_ID", 
+      "value": "test_org_456",
+      "description": "Test Cliq organization ID"
+    },
+    {
+      "key": "ACCESS_TOKEN",
+      "value": "",
+      "description": "OAuth access token (will be set from auth response)"
+    },
+    {
+      "key": "FILE_ID",
+      "value": "",
+      "description": "Sample file ID for testing"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{ACCESS_TOKEN}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Start OAuth Flow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID", 
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"id\": \"{{CLIQ_USER_ID}}\"\n  },\n  \"org\": {\n    \"id\": \"{{CLIQ_ORG_ID}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/startOAuth",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "startOAuth"]
+            },
+            "description": "Initiates OAuth flow and returns authorization URL"
+          },
+          "response": []
+        },
+        {
+          "name": "OAuth Callback (Manual Test)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/oauthCallback?code=AUTHORIZATION_CODE&state=OAUTH_STATE",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "oauthCallback"],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "AUTHORIZATION_CODE",
+                  "description": "Replace with actual authorization code"
+                },
+                {
+                  "key": "state", 
+                  "value": "OAUTH_STATE",
+                  "description": "Replace with actual OAuth state"
+                }
+              ]
+            },
+            "description": "Handles OAuth callback and exchanges code for tokens"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Auth Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/auth/status",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "auth", "status"]
+            },
+            "description": "Check if user is authenticated"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Document Management",
+      "item": [
+        {
+          "name": "Trigger Document Indexing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{CLIQ_USER_ID}}\",\n  \"org_id\": \"{{CLIQ_ORG_ID}}\"\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/indexWorkdrive",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "indexWorkdrive"]
+            },
+            "description": "Manually trigger document indexing for a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Index All Users (Background Job)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/indexWorkdrive",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "indexWorkdrive"]
+            },
+            "description": "Trigger indexing for all authorized users (background job)"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Documents",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"quarterly report\",\n  \"limit\": 10,\n  \"offset\": 0,\n  \"sourceType\": \"all\",\n  \"fileType\": \"all\",\n  \"sortBy\": \"relevance\"\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/searchDocs",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "searchDocs"]
+            },
+            "description": "Search documents with optional filters"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Extract file ID from first result for use in other requests",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.results && response.data.results.length > 0) {",
+                  "        pm.collectionVariables.set('FILE_ID', response.data.results[0].id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Recent Documents",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type", 
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"limit\": 20,\n  \"offset\": 0,\n  \"sortBy\": \"modified\"\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/searchDocs",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "searchDocs"]
+            },
+            "description": "Get recent documents without search query"
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by Source Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sourceType\": \"workdrive\",\n  \"limit\": 10\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/searchDocs",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "searchDocs"]
+            },
+            "description": "Filter documents by source type (workdrive or mail)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Operations",
+      "item": [
+        {
+          "name": "Download File Proxy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/fetchFileProxy/{{FILE_ID}}",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "fetchFileProxy", "{{FILE_ID}}"]
+            },
+            "description": "Download file securely through proxy"
+          },
+          "response": []
+        },
+        {
+          "name": "Get File Metadata",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/fetchFileProxy/{{FILE_ID}}?metadata=true",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "fetchFileProxy", "{{FILE_ID}}"],
+              "query": [
+                {
+                  "key": "metadata",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Get file metadata only without downloading content"
+          },
+          "response": []
+        },
+        {
+          "name": "Summarize Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileId\": \"{{FILE_ID}}\"\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/summarizeDocument",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "summarizeDocument"]
+            },
+            "description": "Generate AI summary for a document"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bot Webhook",
+      "item": [
+        {
+          "name": "Bot Command - Help",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"bot_command\",\n  \"user\": {\n    \"id\": \"{{CLIQ_USER_ID}}\",\n    \"name\": \"Test User\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"chat\": {\n    \"id\": \"chat_123\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"command\": {\n    \"command_name\": \"/doc\",\n    \"params\": [\"help\"]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/botWebhook",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "botWebhook"]
+            },
+            "description": "Test bot help command"
+          },
+          "response": []
+        },
+        {
+          "name": "Bot Command - Auth",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw", 
+              "raw": "{\n  \"type\": \"bot_command\",\n  \"user\": {\n    \"id\": \"{{CLIQ_USER_ID}}\",\n    \"name\": \"Test User\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"chat\": {\n    \"id\": \"chat_123\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"command\": {\n    \"command_name\": \"/doc-auth\",\n    \"params\": []\n  }\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/botWebhook",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "botWebhook"]
+            },
+            "description": "Test bot auth command"
+          },
+          "response": []
+        },
+        {
+          "name": "Bot Command - Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"bot_command\",\n  \"user\": {\n    \"id\": \"{{CLIQ_USER_ID}}\",\n    \"name\": \"Test User\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"chat\": {\n    \"id\": \"chat_123\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"command\": {\n    \"command_name\": \"/doc\",\n    \"params\": [\"search\", \"quarterly\", \"report\"]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/botWebhook",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "botWebhook"]
+            },
+            "description": "Test bot search command"
+          },
+          "response": []
+        },
+        {
+          "name": "Bot Command - Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"bot_command\",\n  \"user\": {\n    \"id\": \"{{CLIQ_USER_ID}}\",\n    \"name\": \"Test User\", \n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"chat\": {\n    \"id\": \"chat_123\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"command\": {\n    \"command_name\": \"/doc-status\",\n    \"params\": []\n  }\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/botWebhook",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "botWebhook"]
+            },
+            "description": "Test bot status command"
+          },
+          "response": []
+        },
+        {
+          "name": "Bot Command - Summary",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"bot_command\",\n  \"user\": {\n    \"id\": \"{{CLIQ_USER_ID}}\",\n    \"name\": \"Test User\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"chat\": {\n    \"id\": \"chat_123\", \n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"command\": {\n    \"command_name\": \"/doc-summary\",\n    \"params\": [\"report.pdf\"]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/botWebhook",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "botWebhook"]
+            },
+            "description": "Test bot summary command"
+          },
+          "response": []
+        },
+        {
+          "name": "Bot Mention",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"bot_mention\",\n  \"user\": {\n    \"id\": \"{{CLIQ_USER_ID}}\",\n    \"name\": \"Test User\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"chat\": {\n    \"id\": \"chat_123\",\n    \"organization_id\": \"{{CLIQ_ORG_ID}}\"\n  },\n  \"message\": {\n    \"text\": \"@DocDex help me search for documents\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/botWebhook",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "botWebhook"]
+            },
+            "description": "Test bot mention functionality"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin & Statistics",
+      "item": [
+        {
+          "name": "Get User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/stats",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "stats"]
+            },
+            "description": "Get user document statistics"
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/health",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "health"]
+            },
+            "description": "Check if all services are running"
+          },
+          "response": []
+        },
+        {
+          "name": "Test Database Connection",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/test/db",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "test", "db"]
+            },
+            "description": "Test database connectivity"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Scenarios",
+      "item": [
+        {
+          "name": "Search Without Auth",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "unauthorized_user"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "unauthorized_org"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"test document\"\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/searchDocs",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "searchDocs"]
+            },
+            "description": "Test search with unauthorized user"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid File Download",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/fetchFileProxy/invalid_file_id",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "fetchFileProxy", "invalid_file_id"]
+            },
+            "description": "Test file download with invalid file ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Search Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Cliq-User-ID",
+                "value": "{{CLIQ_USER_ID}}"
+              },
+              {
+                "key": "X-Cliq-Org-ID",
+                "value": "{{CLIQ_ORG_ID}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"a\"\n}"
+            },
+            "url": {
+              "raw": "{{CATALYST_BASE_URL}}/server/docdex_function/searchDocs",
+              "host": ["{{CATALYST_BASE_URL}}"],
+              "path": ["server", "docdex_function", "searchDocs"]
+            },
+            "description": "Test search with too short query"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set common headers for all requests",
+          "pm.request.headers.add({",
+          "    key: 'User-Agent',",
+          "    value: 'DocDex-Postman-Tests/1.0'",
+          "});",
+          "",
+          "// Validate required variables",
+          "if (!pm.collectionVariables.get('CATALYST_BASE_URL')) {",
+          "    console.error('CATALYST_BASE_URL not set');",
+          "}",
+          "",
+          "if (!pm.collectionVariables.get('CLIQ_USER_ID')) {",
+          "    console.error('CLIQ_USER_ID not set');", 
+          "}",
+          "",
+          "if (!pm.collectionVariables.get('CLIQ_ORG_ID')) {",
+          "    console.error('CLIQ_ORG_ID not set');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test assertions",
+          "pm.test('Response time is acceptable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});",
+          "",
+          "pm.test('Response has valid JSON structure', function () {",
+          "    try {",
+          "        const response = pm.response.json();",
+          "        pm.expect(response).to.be.an('object');",
+          "    } catch (e) {",
+          "        // Skip JSON validation for non-JSON responses (file downloads)",
+          "        console.log('Response is not JSON, skipping JSON validation');",
+          "    }",
+          "});",
+          "",
+          "// Log response for debugging",
+          "if (pm.response.code >= 400) {",
+          "    console.log('Error response:', pm.response.text());",
+          "}"
+        ]
+      }
+    }
+  ]
+}

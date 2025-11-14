@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocDex - Document Explorer</title>
+    <link rel="stylesheet" href="widget.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <i class="fas fa-search"></i>
+                    DocDex
+                </h1>
+                <div class="auth-status" id="authStatus">
+                    <span class="status-indicator" id="statusIndicator"></span>
+                    <span class="status-text" id="statusText">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Auth Required Section -->
+        <div id="authSection" class="auth-section" style="display: none;">
+            <div class="auth-card">
+                <i class="fas fa-lock auth-icon"></i>
+                <h2>Authorization Required</h2>
+                <p>DocDex needs access to your WorkDrive and Mail to index documents.</p>
+                <button id="authorizeBtn" class="btn btn-primary">
+                    <i class="fas fa-shield-alt"></i>
+                    Authorize Access
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="main-content" style="display: none;">
+            
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search documents..." 
+                            class="search-input"
+                            autocomplete="off"
+                        >
+                        <button id="clearSearch" class="clear-btn" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <button id="searchFiltersBtn" class="filters-btn">
+                        <i class="fas fa-filter"></i>
+                        Filters
+                    </button>
+                </div>
+
+                <!-- Search Filters Panel -->
+                <div id="filtersPanel" class="filters-panel" style="display: none;">
+                    <div class="filters-content">
+                        <div class="filter-group">
+                            <label>Source:</label>
+                            <select id="sourceFilter">
+                                <option value="all">All Sources</option>
+                                <option value="workdrive">WorkDrive</option>
+                                <option value="mail">Email Attachments</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>File Type:</label>
+                            <select id="fileTypeFilter">
+                                <option value="all">All Types</option>
+                                <option value="pdf">PDF</option>
+                                <option value="word">Word Documents</option>
+                                <option value="excel">Spreadsheets</option>
+                                <option value="powerpoint">Presentations</option>
+                                <option value="text">Text Files</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort by:</label>
+                            <select id="sortFilter">
+                                <option value="relevance">Relevance</option>
+                                <option value="date">Date Created</option>
+                                <option value="modified">Last Modified</option>
+                                <option value="name">Name</option>
+                                <option value="size">Size</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <button id="refreshIndexBtn" class="action-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh Index
+                </button>
+                <button id="viewStatsBtn" class="action-btn">
+                    <i class="fas fa-chart-bar"></i>
+                    Statistics
+                </button>
+            </section>
+
+            <!-- Recent Documents -->
+            <section class="documents-section">
+                <div class="section-header">
+                    <h2 id="sectionTitle">Recent Documents</h2>
+                    <span id="documentsCount" class="count-badge">0</span>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading documents...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fas fa-folder-open empty-icon"></i>
+                    <h3>No documents found</h3>
+                    <p id="emptyMessage">Start by indexing your documents</p>
+                </div>
+
+                <!-- Documents List -->
+                <div id="documentsList" class="documents-list"></div>
+
+                <!-- Load More -->
+                <div id="loadMoreContainer" class="load-more-container" style="display: none;">
+                    <button id="loadMoreBtn" class="btn btn-secondary">
+                        Load More Documents
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Document Details Modal -->
+        <div id="documentModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Document Details</h3>
+                    <button id="closeModal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Document details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button id="saveToTaskBtn" class="btn btn-primary">
+                        <i class="fas fa-tasks"></i>
+                        Save to Task
+                    </button>
+                    <button id="downloadFileBtn" class="btn btn-secondary">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Modal -->
+        <div id="statsModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>DocDex Statistics</h3>
+                    <button class="close-btn" onclick="closeModal('statsModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="statsContent">
+                    <!-- Stats will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="widget.js"></script>
+</body>
+</html>

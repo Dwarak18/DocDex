@@ -1,0 +1,103 @@
+// Create a Deluge script for auto-indexing
+// This script can be scheduled to run periodically to index documents
+
+// Auto-indexing workflow for DocDex
+// Schedule: Every 6 hours
+// Purpose: Index documents for all authorized users
+
+info "Starting DocDex auto-indexing job";
+
+// Configuration
+catalyst_base_url = "{{CATALYST_APP_URL}}";
+indexing_endpoint = catalyst_base_url + "/indexWorkdrive";
+
+try {
+    // Call the indexing function
+    indexing_response = invokeurl [
+        url: indexing_endpoint
+        type: POST
+        parameters: {}
+        headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "DocDex-Deluge-Scheduler/1.0"
+        }
+    ];
+    
+    if (indexing_response.get("success") == true) {
+        info "Indexing completed successfully";
+        
+        // Log indexing results
+        summary = indexing_response.get("data").get("summary");
+        info "Total users processed: " + summary.get("totalUsers");
+        info "Successful indexes: " + summary.get("successfulIndexes");
+        info "Failed indexes: " + summary.get("failedIndexes");
+        info "Total files indexed: " + summary.get("totalFilesIndexed");
+        
+        // Send notification if there were failures
+        if (summary.get("failedIndexes") > 0) {
+            // Send alert to admin
+            alert_message = "DocDex indexing completed with " + summary.get("failedIndexes") + " failures. Check logs for details.";
+            
+            // You can customize this to send email, Cliq message, etc.
+            info alert_message;
+        }
+        
+    } else {
+        error "Indexing job failed: " + indexing_response.get("message");
+        
+        // Send failure notification
+        error_message = "DocDex auto-indexing job failed. Error: " + indexing_response.get("message");
+        info error_message;
+    }
+    
+} catch (e) {
+    error "Exception in auto-indexing: " + e.toString();
+    
+    // Log the error and send notification
+    error_details = "DocDex auto-indexing failed with exception: " + e.toString();
+    info error_details;
+}
+
+info "Auto-indexing job completed";
+
+// Optional: Clean up expired OAuth states
+try {
+    cleanup_endpoint = catalyst_base_url + "/cleanup/oauth-states";
+    
+    cleanup_response = invokeurl [
+        url: cleanup_endpoint
+        type: POST
+        parameters: {}
+        headers: {
+            "Content-Type": "application/json"
+        }
+    ];
+    
+    if (cleanup_response.get("success") == true) {
+        info "OAuth state cleanup completed";
+    }
+    
+} catch (cleanup_error) {
+    info "OAuth cleanup skipped: " + cleanup_error.toString();
+}
+
+// Optional: Generate usage statistics
+try {
+    stats_endpoint = catalyst_base_url + "/admin/generate-stats";
+    
+    stats_response = invokeurl [
+        url: stats_endpoint
+        type: POST
+        parameters: {}
+        headers: {
+            "Content-Type": "application/json"
+        }
+    ];
+    
+    if (stats_response.get("success") == true) {
+        info "Usage statistics generated successfully";
+    }
+    
+} catch (stats_error) {
+    info "Statistics generation skipped: " + stats_error.toString();
+}

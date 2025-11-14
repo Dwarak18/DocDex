@@ -6,7 +6,7 @@
 class DocDexWidget {
     constructor() {
         this.config = {
-            baseUrl: '{{CATALYST_APP_URL}}',
+            baseUrl: 'http://localhost:3000/server/docdex_function',
             apiVersion: 'v1'
         };
         

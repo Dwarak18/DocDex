@@ -56,7 +56,8 @@ catalyst deploy
 # Configure secrets
 catalyst secrets set ZOHO_CLIENT_ID "your_client_id"
 catalyst secrets set ZOHO_CLIENT_SECRET "your_client_secret"
-catalyst secrets set ZIA_API_KEY "your_zia_key"
+catalyst secrets set OPENAI_API_KEY "your_openai_key"
+catalyst secrets set OPENAI_MODEL "gpt-4-turbo"
 ```
 
 ### 3. Install Extension
@@ -152,8 +153,9 @@ ZOHO_CLIENT_ID=your_oauth_client_id
 ZOHO_CLIENT_SECRET=your_oauth_client_secret
 ZOHO_REDIRECT_URI=https://your-app.catalyst.zoho.com/oauthCallback
 
-# AI Services
-ZIA_API_KEY=your_zia_api_key
+# AI Services (OpenAI)
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4-turbo
 
 # Security
 TOKEN_ENCRYPTION_KEY=random_32_character_key

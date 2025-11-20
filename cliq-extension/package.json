@@ -1,0 +1,15 @@
+{
+  "name": "docdex-cliq-extension",
+  "version": "1.0.0",
+  "description": "DocDex Cliq Extension - AI Document Management",
+  "main": "functions/searchDocuments.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "keywords": ["cliq", "extension", "documents", "ai", "workdrive"],
+  "author": "DocDex Team",
+  "license": "MIT"
+}

@@ -25,29 +25,20 @@
       "unique_name": "docdex_bot",
       "description": "Search and manage your documents with AI-powered insights",
       "avatar": "icons/icon48.png",
-      "webhook": "{{CATALYST_APP_URL}}/bot-webhook",
+      "webhook": "https://docdex-60058081001.development.catalystserverless.in/server/docdex_io/execute?path=botWebhook",
       "commands": [
         {
-          "command": "/doc",
-          "hint": "Search documents",
-          "description": "Search your indexed documents using natural language",
-          "usage": "/doc search <query>"
+          "command": "/docdex",
+          "hint": "DocDex commands",
+          "description": "Search documents and get AI summaries",
+          "usage": "/docdex search <query> | /docdex summarize <file_id> | /docdex help"
         },
         {
-          "command": "/doc-auth",
-          "hint": "Authorize DocDex",
-          "description": "Grant DocDex access to your WorkDrive and Mail",
-          "usage": "/doc-auth"
+          "command": "/docdex-setup",
+          "hint": "Setup DocDex",
+          "description": "Connect DocDex to your WorkDrive account",
+          "usage": "/docdex-setup"
         },
-        {
-          "command": "/doc-status",
-          "hint": "Check status",
-          "description": "Check your DocDex authorization and indexing status",
-          "usage": "/doc-status"
-        },
-        {
-          "command": "/doc-summary",
-          "hint": "Summarize document",
           "description": "Get AI-powered summary of a specific document",
           "usage": "/doc-summary <file-name-or-id>"
         }

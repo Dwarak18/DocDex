@@ -1,0 +1,53 @@
+{
+  "name": "DocDex",
+  "displayName": "DocDex - Smart Document Manager",
+  "description": "AI-powered document search, summarization, and management for your WorkDrive files",
+  "version": "1.0.0",
+  "category": "productivity",
+  "developer": {
+    "name": "DocDex Team",
+    "website": "https://github.com/Dwarak18/DocDex"
+  },
+  "permissions": [
+    "cliq.user.context.read",
+    "cliq.chat.message.create",
+    "cliq.bot.create",
+    "network.post"
+  ],
+  "themes": ["light", "dark"],
+  "widgets": [
+    {
+      "name": "document_search",
+      "type": "applet",
+      "title": "Search Documents",
+      "context": ["chat", "channel"]
+    }
+  ],
+  "functions": [
+    {
+      "name": "search_documents",
+      "handler": "searchDocuments"
+    },
+    {
+      "name": "summarize_document", 
+      "handler": "summarizeDocument"
+    },
+    {
+      "name": "oauth_callback",
+      "handler": "handleOAuthCallback"
+    }
+  ],
+  "bots": [
+    {
+      "name": "docdex_bot",
+      "displayName": "DocDex Bot",
+      "description": "Your AI document assistant"
+    }
+  ],
+  "webhooks": [
+    {
+      "name": "document_webhook",
+      "context": ["message"]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+	"deployment": {
+		"name": "doc_dex_function",
+		"stack": "node20",
+		"type": "basicio",
+		"env_variables": {}
+	},
+	"execution": {
+		"main": "index.js"
+	}
+}

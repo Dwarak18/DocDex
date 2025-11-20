@@ -1,0 +1,9 @@
+{
+	"name": "docdex_io",
+	"version": "1.0.0",
+	"main": "io_index.js",
+	"author": "dwaraka1805@gmail.com",
+	"dependencies": {
+		"zcatalyst-sdk-node": "latest"
+	}
+}

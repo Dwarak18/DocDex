@@ -1,0 +1,9 @@
+{
+	"name": "doc_dex_function",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "dwaraka1805@gmail.com",
+	"dependencies": {
+		"zcatalyst-sdk-node": "latest"
+	}
+}

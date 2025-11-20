@@ -1,0 +1,11 @@
+{
+	"deployment": {
+		"name": "docdex_io",
+		"stack": "node20",
+		"type": "basicio",
+		"env_variables": {}
+	},
+	"execution": {
+		"main": "io_index.js"
+	}
+}
